@@ -1,2 +1,99 @@
-# ansible-playbooks-dec-batch
-contains ansible playbooks
+# ansible-role-httpd #
+
+[![GitHub Build Status](https://github.com/cisagov/ansible-role-httpd/workflows/build/badge.svg)](https://github.com/cisagov/ansible-role-httpd/actions)
+[![License](https://img.shields.io/github/license/cisagov/ansible-role-httpd)](https://spdx.org/licenses/)
+[![CodeQL](https://github.com/cisagov/ansible-role-httpd/workflows/CodeQL/badge.svg)](https://github.com/cisagov/ansible-role-httpd/actions/workflows/codeql-analysis.yml)
+
+This is an Ansible role that installs [Apache
+httpd](https://httpd.apache.org/), along with the
+[mod_auth_gssapi](https://github.com/gssapi/mod_auth_gssapi) and
+[mod_authnz_pam](https://github.com/adelton/mod_authnz_pam) modules.
+This lays the base for an Apache httpd server suitable for
+authentication against
+[Kerberos](https://en.wikipedia.org/wiki/Kerberos_(protocol)) via
+GSSAPI and authorization via
+[PAM](https://en.wikipedia.org/wiki/Linux_PAM).
+
+This is ideal for a web server in [the
+COOL](https://github.com/cisagov/cool-system) that wishes to
+authenticate users via Kerberos and authorize users via
+[`pam_sss`](https://linux.die.net/man/8/pam_sss) against
+[FreeIPA](https://www.freeipa.org/page/Main_Page)'s HBAC (host-based
+access control) rules.
+
+## Requirements ##
+
+None.
+
+## Role Variables ##
+
+None.
+
+<!--
+| Variable | Description | Default | Required |
+| -------- | ----------- | ------- | -------- |
+| optional_variable | Describe its purpose. | `default_value` | No |
+| required_variable | Describe its purpose. | n/a | Yes |
+-->
+
+## Dependencies ##
+
+None.
+
+## Installation ##
+
+This role can be installed via the command:
+
+```console
+ansible-galaxy install --role-file path/to/requirements.yml
+```
+
+where `requirements.yml` looks like:
+
+```yaml
+---
+- name: httpd
+  src: https://github.com/cisagov/ansible-role-httpd
+```
+
+and may contain other roles as well.
+
+For more information about installing Ansible roles via a YAML file,
+please see [the `ansible-galaxy`
+documentation](https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#installing-multiple-roles-from-a-file).
+
+## Example Playbook ##
+
+Here's how to use it in a playbook:
+
+```yaml
+- hosts: all
+  become: true
+  become_method: sudo
+  tasks:
+    - name: Install httpd
+      ansible.builtin.include_role:
+        name: httpd
+```
+
+## Contributing ##
+
+We welcome contributions!  Please see [`CONTRIBUTING.md`](CONTRIBUTING.md) for
+details.
+
+## License ##
+
+This project is in the worldwide [public domain](LICENSE).
+
+This project is in the public domain within the United States, and
+copyright and related rights in the work worldwide are waived through
+the [CC0 1.0 Universal public domain
+dedication](https://creativecommons.org/publicdomain/zero/1.0/).
+
+All contributions to this project will be released under the CC0
+dedication. By submitting a pull request, you are agreeing to comply
+with this waiver of copyright interest.
+
+## Author Information ##
+
+Shane Frasier - <jeremy.frasier@gwe.cisa.dhs.gov>

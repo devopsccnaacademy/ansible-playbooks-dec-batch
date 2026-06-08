@@ -1,0 +1,54 @@
+---
+- name: Load var file with package names based on the OS type
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ ansible_distribution }}_{{ ansible_distribution_release }}.yml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+      paths:
+        - "{{ role_path }}/vars"
+
+- name: Install httpd with modules needed to create a kerberized proxy
+  ansible.builtin.package:
+    name: "{{ httpd_package_names }}"
+
+# On RedHat these modules are already enabled, and apache2_module does
+# not work there, so we only run this task on non-RedHat hosts.
+- name: Enable some httpd modules
+  community.general.apache2_module:
+    name: "{{ item }}"
+  loop:
+    - auth_gssapi
+    - authnz_pam
+    - headers
+    - proxy
+    - proxy_http
+    - proxy_wstunnel
+    - session
+    - session_cookie
+    - ssl
+  when: ansible_os_family != "RedHat"
+
+- name: Systemd daemon-reload
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable httpd
+  ansible.builtin.service:
+    enabled: true
+    name: "{{ httpd_service_name }}"
+
+- name: Copy setup script
+  ansible.builtin.copy:
+    dest: /usr/local/sbin
+    mode: u=rx,g=,o=
+    src: 01_setup_http_service.sh
+- name: Copy website index page
+  ansible.builtin.copy:
+    src: index.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: '0644'
